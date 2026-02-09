@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use chrono::NaiveDateTime;
+use time::OffsetDateTime; // had to change this to match with the one on mysql schema
 
 #[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct Flower {
@@ -9,22 +9,15 @@ pub struct Flower {
     pub y: f64,
     pub name: String,
     pub hours: f64,
-    pub created_at: Option<NaiveDateTime>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<OffsetDateTime>,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct NewFlower{
+pub struct NewFlower {
     pub id: String,
     pub x: f64,
     pub y: f64,
     pub name: String,
     pub hours: f64,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct UpdateFlower{
-    pub x: Option<f64>,
-    pub y: Option<f64>,
-    pub name: Option<String>,
-    pub hours: Option<f64>,
 }

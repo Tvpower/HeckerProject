@@ -1,7 +1,7 @@
 use rocket::{State, serde::json::Json, http::Status};
 use sqlx::MySqlPool;
-use rocket::{get, post, put, delete};
-use crate::models::{Flower, NewFlower, UpdateFlower};
+use rocket::{get, post, delete};
+use crate::models::{Flower, NewFlower};
 
 /// Get all flowers
 #[get("/flowers")]
@@ -85,10 +85,10 @@ pub async fn delete_flower(id: String, pool: &State<MySqlPool>) -> Result<Status
             eprintln!("Database error: {}", e);
             Status::InternalServerError
         })?;
-    
+
     if result.rows_affected() == 0 {
         return Err(Status::NotFound);
     }
-    
+
     Ok(Status::NoContent)
 }

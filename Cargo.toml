@@ -7,8 +7,8 @@ edition = "2021"
 # Rocket web framework
 rocket = { version = "0.5.1", features = ["json"] }
 
-# Database
-sqlx = { version = "0.8", features = ["runtime-tokio", "mysql", "chrono"] }
+# Database - added "time" feature for timestamp support
+sqlx = { version = "0.8", features = ["runtime-tokio", "mysql", "time"] }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -20,8 +20,8 @@ rocket_cors = "0.6"
 # Async runtime
 tokio = { version = "1", features = ["full"] }
 
-# Date/Time
-chrono = { version = "0.4", features = ["serde"] }
+# Time handling
+time = { version = "0.3", features = ["serde", "formatting", "parsing"] }
 
 # Environment variables
 dotenv = "0.15"
