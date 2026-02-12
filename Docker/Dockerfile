@@ -1,4 +1,4 @@
-FROM rust:1.85-slim AS builder
+FROM rust:1.88-slim AS builder
 
 WORKDIR /app
 
@@ -7,16 +7,35 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy manifests
+# Create a dummy project to cache dependencies
+RUN cargo new --bin HeckerProject
+WORKDIR /app/HeckerProject
+
+# manifest info
 COPY Cargo.toml Cargo.lock ./
 
-COPY src ./src
+# Define the arg for the database URL
+ARG DATABASE_URL
 
-#Build the app in release mode - why release?
+# Needs to be as an environmental variable so cargo/sqlx can see it
+ENV DATABASE_URL=$DATABASE_URL
+
+# Build
 RUN cargo build --release
 
-# Runtime state - what is this?
-FROM debian:boookworm-slim
+# Remove the dummy source
+RUN rm src/*.rs
+
+# we need to remove this so docker doesn't save the zombie files from the initialization step
+
+COPY ./src ./src
+
+#Build app
+RUN touch src/main.rs
+RUN cargo build --release
+
+# Stage 2: Runtime
+FROM debian:bookworm-slim
 
 WORKDIR /app
 
@@ -26,10 +45,15 @@ RUN apt-get update && apt-get install -y \
     libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the built binary from builder
-COPY --from=builder /app/target/release/HeckerProject /app/backend
+COPY --from=builder /app/HeckerProject/target/release/HeckerProject /app/backend
 
-# Expose defaut port
 EXPOSE 8000
 
-CMD ["./backend"]
+#Use entrypoint instead to always run.
+# The reason to this is because we always want to assure we have a single entrypoint
+#With CMD we run the risk that the image could be used to run something else which is bad
+
+ENTRYPOINT ["./backend"]
+
+#Need to check why the heavy dependency on database
+
