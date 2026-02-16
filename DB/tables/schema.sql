@@ -1,5 +1,5 @@
 CREATE TABLE flowers (
-                         id VARCHAR(36) PRIMARY KEY,
+                         id VARCHAR(64) PRIMARY KEY,
                          x DOUBLE NOT NULL,
                          y DOUBLE NOT NULL,
                          name VARCHAR(255) NOT NULL,

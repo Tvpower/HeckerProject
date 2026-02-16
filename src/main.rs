@@ -6,6 +6,8 @@ use rocket::{launch, routes, Build, Rocket};
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use std::env;
 
+// change localhost ip to my home ip
+
 #[launch]
 async fn rocket() -> Rocket<Build> {
     // Load env variables
@@ -14,7 +16,7 @@ async fn rocket() -> Rocket<Build> {
     let database_url = env::var("DATABASE_URL")
         .expect("DATABASE_URL must be set in .env file");
 
-    // Create db connection pool
+    // Create a db connection pool
     let pool = db::create_pool(&database_url)
         .await
         .expect("Failed to create database pool");
